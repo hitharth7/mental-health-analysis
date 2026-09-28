@@ -1,7 +1,12 @@
 # components/pipeline/data_extraction.py
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
 from components.logger import logger
 import praw
+
 import firebase_admin
 from firebase_admin import credentials, db
 from datetime import datetime, timedelta

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { TwitterApi } from "twitter-api-v2";
-import { adminDB  } from "@/lib/firebaseAdmin"; // ✅ fixed name
+import { adminDB } from "@/lib/firebaseAdmin";
 
 export async function GET(req: Request) {
   try {
@@ -11,12 +11,22 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing user ID" }, { status: 400 });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!;
+    const clientId = process.env.TWITTER_CLIENT_ID;
+    const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret || clientId === "your_twitter_client_id") {
+      return NextResponse.json(
+        { error: "Twitter API credentials are not configured in .env.local" },
+        { status: 400 }
+      );
+    }
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const callbackUrl = `${baseUrl}/api/connect/twitter/callback`;
 
     const client = new TwitterApi({
-      clientId: process.env.TWITTER_CLIENT_ID!,
-      clientSecret: process.env.TWITTER_CLIENT_SECRET!,
+      clientId,
+      clientSecret,
     });
 
     const scopes = ["tweet.read", "users.read", "offline.access"];
@@ -26,7 +36,7 @@ export async function GET(req: Request) {
     });
 
     // Save verifier + uid temporarily in Firestore
-    await adminDB .collection("oauth_temp").doc(state).set({
+    await adminDB.collection("oauth_temp").doc(state).set({
       codeVerifier,
       uid,
       provider: "twitter",

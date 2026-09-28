@@ -172,7 +172,8 @@ export default function ProfileSetupPage() {
         createdAt: new Date(),
       };
 
-      await setDoc(doc(db, "profiles", user.uid), profileData);
+      await setDoc(doc(db, "users", user.uid), { ...profileData, onboardingComplete: true }, { merge: true });
+      await setDoc(doc(db, "profiles", user.uid), profileData, { merge: true });
       toast.success("Profile saved. Redirecting to dashboard...");
       router.push("/dashboard");
     } catch (err) {

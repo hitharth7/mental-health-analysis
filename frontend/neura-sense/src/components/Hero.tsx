@@ -69,7 +69,7 @@ export default function Hero() {
               Get My Insights 🚀
             </Button>
           </Link>
-          <Link href="/connect">
+          <Link href="/profile-setup">
             <Button
               variant="outline"
               size="lg"
